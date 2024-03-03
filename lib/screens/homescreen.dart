@@ -2,15 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:google_tasks/data/dummy_data.dart';
 import 'package:google_tasks/widget/bottom_widget.dart';
 import 'package:google_tasks/widget/task_widget.dart';
+
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
   @override
   State<HomeScreen> createState() => _HomeScreenState();
 }
+
 class _HomeScreenState extends State<HomeScreen> {
   void refreshData() {
     setState(() {});
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -27,7 +30,7 @@ class _HomeScreenState extends State<HomeScreen> {
       body: RefreshIndicator(
         onRefresh: () async {
           await Future.delayed(
-            const Duration(seconds: 1),
+            const Duration(milliseconds: 50),
           );
           setState(() {});
         },
@@ -36,14 +39,10 @@ class _HomeScreenState extends State<HomeScreen> {
           child: ListView.builder(
             itemCount: taskdata.length,
             itemBuilder: (context, index) {
-              if (index < taskdata.length) {
-                return TaskWidget(
-                  index: index,
-                  refreshData: refreshData,
-                );
-              } else {
-                return const SizedBox(); 
-              }
+              return TaskWidget(
+                index: index,
+                refreshData: refreshData,
+              );
             },
           ),
         ),

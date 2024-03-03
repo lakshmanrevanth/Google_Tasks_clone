@@ -1,5 +1,8 @@
+import 'package:another_flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:google_tasks/data/dummy_data.dart';
+import 'package:google_tasks/flushbar.dart';
+
 class TaskScreen extends StatefulWidget {
   final int index;
   final Function refreshData;
@@ -11,22 +14,41 @@ class TaskScreen extends StatefulWidget {
   @override
   State<TaskScreen> createState() => _TaskScreenState();
 }
+
 class _TaskScreenState extends State<TaskScreen> {
   String value = "Delete";
   DateTime selecteddate = DateTime.now();
   void handleclick(int value, int index) {
+    bool timerfinished = false;
     switch (value) {
       case 0:
-        setState(() {
-          Navigator.pop(context);
-          Future.delayed(const Duration(seconds: 1), () {
-            taskdata.removeAt(index);
-            widget.refreshData();
-          });
+        final temp = taskdata.removeAt(index);
+        FlushBars.undo(
+          message: "confirm",
+          onUndo: () {
+            taskdata.insert(index, temp);
+            setState(() {});
+            Navigator.pop(context);
+            timerfinished = true;
+          },
+          duration: Duration(seconds: 6),
+        ).show(context);
+
+        // Future.delayed(const Duration(seconds: 1), () {
+        //   taskdata.removeAt(index);
+        //   widget.refreshData();
+        // });
+        Future.delayed(Duration(seconds: 6), () {
+          if (!timerfinished) {
+            Navigator.pop(context); // Pop the screen to go back to home screen
+          }
+          widget.refreshData(); // Refresh data after the timer finishes
         });
+
         break;
     }
   }
+
   final TextEditingController controller = TextEditingController();
   @override
   Widget build(BuildContext context) {
